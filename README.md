@@ -62,6 +62,12 @@ Run your Python application. Make sure it's properly configured to use the Fireb
 
 Go to the Firebase Console, navigate to your project, and check the Realtime Database section. You should see data being added under the `/voice_commands` node.
 
+![Screenshot 2024-08-02 002424](https://github.com/user-attachments/assets/94f529f5-7860-4bb4-96ae-454734047268)
+
+
+![image](https://github.com/user-attachments/assets/04e4f6dd-6184-492a-858d-fa83106558e7)
+
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
