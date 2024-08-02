@@ -71,5 +71,5 @@ Go to the Firebase Console, navigate to your project, and check the Realtime Dat
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-```
+
 
