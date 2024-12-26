@@ -24,7 +24,7 @@ firebase_config = {
 }
 
 
-cred = credentials.Certificate("C:/Users/ravik/Downloads/bit-voice-assistant-firebase-adminsdk-buvkj-f6730d8572.json")
+cred = credentials.Certificate("D:/GitHub/BIT-Voice-Assistant-main/voice/voice-e358a-firebase-adminsdk-o9t2y-1ef8f373a8.json")
 
 try:
     firebase_admin.initialize_app(cred, firebase_config)
