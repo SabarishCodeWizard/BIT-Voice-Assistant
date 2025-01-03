@@ -109,3 +109,8 @@ function findResponse(userMessage) {
     }
     return botData.default_response;
 }
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+    const chatBody = document.getElementById('chat-body');
+    chatBody.innerHTML = ''; // Clear all chat messages
+});
