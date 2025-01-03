@@ -5,17 +5,13 @@
     <meta charset="UTF-8">
     <title>BIT QUERY SYSTEM</title>
     <style>
-        
         body {
             background-color: lightblue;
             font-family: Arial, sans-serif;
             background-image: url("{{ url_for('static', filename='background.jpg') }}");
-         
-            background-size: cover; /* To make sure the image covers the entire background */
-            background-repeat: no-repeat; /* To avoid repeating the image */
+            background-size: cover;
+            background-repeat: no-repeat;
         }
-
-
 
         #container {
             width: 400px;
@@ -59,9 +55,7 @@
             left: 0;
             background: #015871;
             display: none;
-            /* Initially hidden */
         }
-
 
         .wave {
             background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x;
@@ -70,7 +64,6 @@
             width: 6400px;
             height: 198px;
             animation: newWave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
-            transform: translate3d(0, 0, 0);
         }
 
         .wave:nth-of-type(2) {
@@ -90,7 +83,6 @@
         }
 
         @keyframes swell {
-
             0%,
             100% {
                 transform: translate3d(0, -25px, 0);
@@ -110,7 +102,46 @@
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.3s ease;
+        }
 
+        #chat-container {
+            position: fixed;
+            top: 10%;
+            right: -400px;
+            width: 350px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            transition: right 0.5s ease;
+            z-index: 1000;
+        }
+
+        #chat-container.open {
+            right: 10px;
+        }
+
+        #chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        #chat-input {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        #chat-container button {
+            padding: 10px;
+            background-color: orangered;
+            color: white;
+            border: none;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -118,23 +149,34 @@
 <body class="body">
     <div id="container">
         <h1>Query System</h1>
+        <button class="button" onclick="toggleChat()">Toggle Chat</button>
         <form action="/process" method="post">
             <button id="queryButton" class="button" type="submit" onclick="startWaveAnimation()">Start Query
                 System</button>
-
         </form>
         <div id="waveContainer" class="wave-container ocean">
             <div class="wave"></div>
             <div class="wave"></div>
         </div>
     </div>
+
     <div class="cursor-shadow"></div>
+
+    <div id="chat-container">
+        <h2>Chat with Us</h2>
+        <div id="chat-box">
+            <!-- Chat messages will appear here -->
+        </div>
+        <input id="chat-input" type="text" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
     <script>
         function startWaveAnimation() {
-            console.log("Wave animation started!");
             document.getElementById('queryButton').style.display = 'none';
             document.getElementById('waveContainer').style.display = 'block';
         }
+
         document.addEventListener('mousemove', updateCursorShadow);
 
         function updateCursorShadow(event) {
@@ -148,8 +190,41 @@
                 cursorShadow.style.opacity = 0;
             }, 300);
         }
-    </script>
 
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatBox = document.getElementById('chat-box');
+            const userMessage = `<p><strong>You:</strong> ${message}</p>`;
+            chatBox.innerHTML += userMessage;
+            input.value = '';
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const botMessage = `<p><strong>Bot:</strong> ${data.response}</p>`;
+                    chatBox.innerHTML += botMessage;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                })
+                .catch(error => {
+                    const errorMessage = `<p><strong>Error:</strong> Failed to fetch response.</p>`;
+                    chatBox.innerHTML += errorMessage;
+                });
+        }
+
+        function toggleChat() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.classList.toggle('open');
+        }
+    </script>
 </body>
 
 </html>
