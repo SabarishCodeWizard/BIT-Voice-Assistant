@@ -9,14 +9,9 @@
             background-color: lightblue;
             font-family: Arial, sans-serif;
             background-image: url("{{ url_for('static', filename='background.jpg') }}");
-
             background-size: cover;
-            /* To make sure the image covers the entire background */
             background-repeat: no-repeat;
-            /* To avoid repeating the image */
         }
-
-
 
         #container {
             width: 400px;
@@ -27,6 +22,7 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-top: 20%;
+            text-align: center;
         }
 
         h1 {
@@ -34,7 +30,6 @@
         }
 
         form {
-            text-align: center;
             margin-top: 20px;
         }
 
@@ -46,10 +41,32 @@
             border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
         }
 
         .button:hover {
             background-color: red;
+            transform: scale(1.05);
+        }
+
+        .toggle-chat-button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-chat-button:hover {
+            background: linear-gradient(90deg, #feb47b, #ff7e5f);
+            transform: scale(1.1);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
         }
 
         .ocean {
@@ -60,9 +77,7 @@
             left: 0;
             background: #015871;
             display: none;
-            /* Initially hidden */
         }
-
 
         .wave {
             background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x;
@@ -71,7 +86,6 @@
             width: 6400px;
             height: 198px;
             animation: newWave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
-            transform: translate3d(0, 0, 0);
         }
 
         .wave:nth-of-type(2) {
@@ -111,7 +125,77 @@
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.3s ease;
+        }
 
+        #chat-container {
+            position: fixed;
+            top: 10%;
+            right: -400px;
+            width: 350px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            transition: right 0.5s ease;
+            z-index: 1000;
+        }
+
+        #chat-container.open {
+            right: 10px;
+        }
+
+        #chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        #chat-input {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        #chat-container button {
+            padding: 10px;
+            background-color: orangered;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        #chat-header {
+            background-color: orangered;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #chat-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        #chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        #chat-close:hover {
+            color: #ffcccc;
         }
     </style>
 </head>
@@ -119,48 +203,33 @@
 <body class="body">
     <div id="container">
         <h1>Query System</h1>
-        <button class="button" onclick="toggleChat()">Toggle Chat</button>
+
         <form action="/process" method="post">
             <button id="queryButton" class="button" type="submit" onclick="startWaveAnimation()">Start Query
                 System</button>
-
         </form>
+
+        <button class="toggle-chat-button" onclick="toggleChat()">🤖</button>
+
         <div id="waveContainer" class="wave-container ocean">
             <div class="wave"></div>
             <div class="wave"></div>
         </div>
     </div>
-    <div class="cursor-shadow"></div>
-    <script>
-        function startWaveAnimation() {
-            console.log("Wave animation started!");
-            document.getElementById('queryButton').style.display = 'none';
-            document.getElementById('waveContainer').style.display = 'block';
-        }
-        document.addEventListener('mousemove', updateCursorShadow);
 
-        function updateCursorShadow(event) {
-            const x = event.clientX;
-            const y = event.clientY;
-            const cursorShadow = document.querySelector('.cursor-shadow');
-            cursorShadow.style.left = x - 10 + 'px';
-            cursorShadow.style.top = y - 10 + 'px';
-            cursorShadow.style.opacity = 1;
-            setTimeout(() => {
-                cursorShadow.style.opacity = 0;
-            }, 300);
-        }
-    </script>
-    <div id="chat-container" style="display: none;">
-        <h2>Chat with Us</h2>
-        <div id="chat-box"
-            style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9;">
+    <div class="cursor-shadow"></div>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <h2>Chat with BIT-Bot</h2>
+            <button id="chat-close" onclick="toggleChat()">✖</button>
+        </div>
+        <div id="chat-box">
             <!-- Chat messages will appear here -->
         </div>
-        <input id="chat-input" type="text" placeholder="Type your message..."
-            style="width: 80%; padding: 10px; margin-top: 10px;">
-        <button onclick="sendMessage()"
-            style="padding: 10px; background-color: orangered; color: white; border: none;">Send</button>
+        <input id="chat-input" type="text" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="clearChat()">Clear</button> <!-- Clear Button -->
     </div>
 
     <script>
@@ -193,12 +262,16 @@
                 });
         }
 
+        function clearChat() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = ''; // Clears all chat messages
+        }
+
         function toggleChat() {
             const chatContainer = document.getElementById('chat-container');
-            chatContainer.style.display = chatContainer.style.display === 'none' ? 'block' : 'none';
+            chatContainer.classList.toggle('open');
         }
     </script>
-
 </body>
 
 </html>

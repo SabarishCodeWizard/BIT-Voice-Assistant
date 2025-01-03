@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{{ url_for('static', filename='background.jpg') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        header {
+            background-color: orangered;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        main {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 2rem;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        li form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        li form button {
+            align-self: flex-start;
+        }
+        .delete-button {
+            background-color: #f44336;
+        }
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+        .toggle-button {
+            background-color: #008cba;
+        }
+        .toggle-button:hover {
+            background-color: #007bb5;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: orangered;
+            color: white;
+            font-size: 0.9rem;
+            border-top: 1px solid #ddd;
+        }
+        .search-bar {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 0.8rem;
+            margin-right: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin Panel</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Add New Response</h2>
+            <form action="/admin/add" method="post">
+                <label for="patterns">Patterns (comma-separated):</label>
+                <input type="text" name="patterns" id="patterns" placeholder="e.g., hello, hi, greetings" required>
+                <label for="response">Response:</label>
+                <textarea name="response" id="response" rows="4" placeholder="Enter the response text here" required></textarea>
+                <button type="submit">Add Response</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Existing Responses</h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search responses...">
+                <button onclick="filterResponses()">Search</button>
+            </div>
+            <button class="toggle-button" onclick="toggleResponses()">Show/Hide All</button>
+            <ul id="responseList">
+                {% for key, response in responses.items() %}
+                <li class="response-item">
+                    <form action="/admin/update/{{ key }}" method="post">
+                        <label for="patterns">Patterns:</label>
+                        <input type="text" name="patterns" value="{{ ','.join(response['patterns']) }}" required>
+                        <label for="response">Response:</label>
+                        <textarea name="response" rows="3" required>{{ response['response'] }}</textarea>
+                        <button type="submit">Update</button>
+                    </form>
+                    <form action="/admin/delete/{{ key }}" method="post">
+                        <button type="submit" class="delete-button">Delete</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Admin Panel. All rights reserved.</p>
+    </footer>
+    <script>
+        function toggleResponses() {
+            const responses = document.querySelectorAll('.response-item');
+            responses.forEach(response => {
+                response.style.display = response.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+
+        function filterResponses() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const responses = document.querySelectorAll('.response-item');
+            responses.forEach(response => {
+                const patterns = response.querySelector('input[name="patterns"]').value.toLowerCase();
+                const responseText = response.querySelector('textarea[name="response"]').value.toLowerCase();
+                if (patterns.includes(query) || responseText.includes(query)) {
+                    response.style.display = 'block';
+                } else {
+                    response.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
