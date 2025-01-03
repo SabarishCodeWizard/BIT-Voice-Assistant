@@ -186,6 +186,16 @@ def store_command(question, language_choice, voice_gender):
         'voice_gender': voice_gender
     })
 
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_input = request.json.get('message', '').strip()
+    if not user_input:
+        return {"response": "Please provide a message to process."}, 400
+
+    # Process the input and generate a response
+    response = generate_response(user_input, "en", "f")  # Assuming English and female voice for chatbot
+    return {"response": response}
+
 
 @app.route('/')
 def index():
