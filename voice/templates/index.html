@@ -5,14 +5,15 @@
     <meta charset="UTF-8">
     <title>BIT QUERY SYSTEM</title>
     <style>
-        
         body {
             background-color: lightblue;
             font-family: Arial, sans-serif;
             background-image: url("{{ url_for('static', filename='background.jpg') }}");
-         
-            background-size: cover; /* To make sure the image covers the entire background */
-            background-repeat: no-repeat; /* To avoid repeating the image */
+
+            background-size: cover;
+            /* To make sure the image covers the entire background */
+            background-repeat: no-repeat;
+            /* To avoid repeating the image */
         }
 
 
@@ -118,6 +119,7 @@
 <body class="body">
     <div id="container">
         <h1>Query System</h1>
+        <button class="button" onclick="toggleChat()">Toggle Chat</button>
         <form action="/process" method="post">
             <button id="queryButton" class="button" type="submit" onclick="startWaveAnimation()">Start Query
                 System</button>
@@ -147,6 +149,53 @@
             setTimeout(() => {
                 cursorShadow.style.opacity = 0;
             }, 300);
+        }
+    </script>
+    <div id="chat-container" style="display: none;">
+        <h2>Chat with Us</h2>
+        <div id="chat-box"
+            style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9;">
+            <!-- Chat messages will appear here -->
+        </div>
+        <input id="chat-input" type="text" placeholder="Type your message..."
+            style="width: 80%; padding: 10px; margin-top: 10px;">
+        <button onclick="sendMessage()"
+            style="padding: 10px; background-color: orangered; color: white; border: none;">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatBox = document.getElementById('chat-box');
+            const userMessage = `<p><strong>You:</strong> ${message}</p>`;
+            chatBox.innerHTML += userMessage;
+            input.value = '';
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const botMessage = `<p><strong>Bot:</strong> ${data.response}</p>`;
+                    chatBox.innerHTML += botMessage;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                })
+                .catch(error => {
+                    const errorMessage = `<p><strong>Error:</strong> Failed to fetch response.</p>`;
+                    chatBox.innerHTML += errorMessage;
+                });
+        }
+
+        function toggleChat() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.style.display = chatContainer.style.display === 'none' ? 'block' : 'none';
         }
     </script>
 
