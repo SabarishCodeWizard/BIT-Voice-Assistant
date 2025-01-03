@@ -83,6 +83,7 @@
         }
 
         @keyframes swell {
+
             0%,
             100% {
                 transform: translate3d(0, -25px, 0);
@@ -143,6 +144,37 @@
             border: none;
             border-radius: 4px;
         }
+
+        #chat-header {
+            background-color: orangered;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #chat-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        #chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        #chat-close:hover {
+            color: #ffcccc;
+        }
     </style>
 </head>
 
@@ -163,7 +195,10 @@
     <div class="cursor-shadow"></div>
 
     <div id="chat-container">
-        <h2>Chat with Us</h2>
+        <div id="chat-header">
+            <h2>Chat with BIT-Bot</h2>
+            <button id="chat-close" onclick="toggleChat()">✖</button>
+        </div>
         <div id="chat-box">
             <!-- Chat messages will appear here -->
         </div>
