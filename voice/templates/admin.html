@@ -1,38 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Admin Panel - Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            text-align: center;
+            color: orangered;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: orangered;
+            color: white;
+        }
+
+        .delete-button {
+            color: white;
+            background-color: red;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: darkred;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Manage Responses</h1>
-    
-    <form action="/admin/add" method="post">
-        <h2>Add New Response</h2>
-        <label for="patterns">Patterns (comma-separated):</label>
-        <input type="text" name="patterns" id="patterns" required>
-        <br>
-        <label for="response">Response:</label>
-        <textarea name="response" id="response" required></textarea>
-        <br>
+    <h1>Admin Panel - Manage Responses</h1>
+
+    <form id="add-response-form">
+        <input type="text" id="pattern" placeholder="Pattern" required>
+        <input type="text" id="response" placeholder="Response" required>
         <button type="submit">Add Response</button>
     </form>
 
-    <h2>Existing Responses</h2>
-    <ul>
-        {% for key, response in responses.items() %}
-        <li>
-            <form action="/admin/update/{{ key }}" method="post">
-                <input type="text" name="patterns" value="{{ ','.join(response['patterns']) }}" required>
-                <textarea name="response" required>{{ response['response'] }}</textarea>
-                <button type="submit">Update</button>
-            </form>
-            <form action="/admin/delete/{{ key }}" method="post">
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Pattern</th>
+                <th>Response</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="responses-table">
+            <!-- Dynamic content will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Fetch existing responses
+        fetch('/admin')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('responses-table');
+                data.responses.forEach(entry => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${entry.patterns}</td>
+                        <td>${entry.response}</td>
+                        <td><button class="delete-button" onclick="deleteResponse('${entry.patterns}')">Delete</button></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            });
+
+        // Add new response
+        document.getElementById('add-response-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pattern = document.getElementById('pattern').value.trim();
+            const response = document.getElementById('response').value.trim();
+
+            fetch('/admin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ pattern, response })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                location.reload();
+            });
+        });
+
+        // Delete response
+        function deleteResponse(pattern) {
+            fetch('/admin/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ pattern })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                location.reload();
+            });
+        }
+    </script>
 </body>
+
 </html>
