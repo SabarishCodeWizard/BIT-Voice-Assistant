@@ -79,6 +79,29 @@ def text_to_speech(text, language='en', voice_gender='f'):
     engine.say(text)
     engine.runAndWait()
 
+def get_responses():
+    ref = db.reference('/responses')
+    return ref.get() or {}
+
+def add_response(patterns, response):
+    ref = db.reference('/responses')
+    ref.push({
+        'patterns': patterns,
+        'response': response
+    })
+
+def update_response(key, patterns, response):
+    ref = db.reference(f'/responses/{key}')
+    ref.update({
+        'patterns': patterns,
+        'response': response
+    })
+
+def delete_response(key):
+    ref = db.reference(f'/responses/{key}')
+    ref.delete()
+
+
 def process_query():
     continue_playing = True
     language_choice = ''
@@ -159,21 +182,19 @@ def process_query():
     return redirect('/')
 
 def generate_response(question, language_choice, voice_gender):
-    # Load responses from the JSON file
-    with open('responses.json', 'r') as file:
-        response_data = json.load(file)
-
+    responses = get_responses()
+    
     # Process the question using spaCy for entity recognition
     doc = nlp(question)
     entities = [ent.text.lower() for ent in doc.ents]
 
-    # Check each response pattern in the JSON file
-    for response_entry in response_data['responses']:
+    # Check each response pattern in the database
+    for key, response_entry in responses.items():
         if all(keyword.lower() in question.lower() for keyword in response_entry['patterns']):
             return response_entry['response']
 
-    # If no matching pattern is found, return the default response
-    return response_data['default_response']
+    # If no matching pattern is found, return a default response
+    return "Sorry, I don't have an answer for that."
 
 def store_command(question, language_choice, voice_gender):
     # Get a reference to the database
@@ -204,6 +225,31 @@ def index():
 @app.route('/process', methods=['POST'])
 def process():
     return process_query()
+
+@app.route('/admin')
+def admin_index():
+    responses = get_responses()
+    return render_template('admin.html', responses=responses)
+
+@app.route('/admin/add', methods=['POST'])
+def admin_add():
+    patterns = request.form.getlist('patterns')
+    response = request.form.get('response')
+    add_response(patterns, response)
+    return redirect('/admin')
+
+@app.route('/admin/update/<key>', methods=['POST'])
+def admin_update(key):
+    patterns = request.form.getlist('patterns')
+    response = request.form.get('response')
+    update_response(key, patterns, response)
+    return redirect('/admin')
+
+@app.route('/admin/delete/<key>', methods=['POST'])
+def admin_delete(key):
+    delete_response(key)
+    return redirect('/admin')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
