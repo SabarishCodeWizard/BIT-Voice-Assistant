@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <h1>Manage Responses</h1>
+    
+    <form action="/admin/add" method="post">
+        <h2>Add New Response</h2>
+        <label for="patterns">Patterns (comma-separated):</label>
+        <input type="text" name="patterns" id="patterns" required>
+        <br>
+        <label for="response">Response:</label>
+        <textarea name="response" id="response" required></textarea>
+        <br>
+        <button type="submit">Add Response</button>
+    </form>
+
+    <h2>Existing Responses</h2>
+    <ul>
+        {% for key, response in responses.items() %}
+        <li>
+            <form action="/admin/update/{{ key }}" method="post">
+                <input type="text" name="patterns" value="{{ ','.join(response['patterns']) }}" required>
+                <textarea name="response" required>{{ response['response'] }}</textarea>
+                <button type="submit">Update</button>
+            </form>
+            <form action="/admin/delete/{{ key }}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
