@@ -204,28 +204,10 @@
         </div>
         <input id="chat-input" type="text" placeholder="Type your message...">
         <button onclick="sendMessage()">Send</button>
+        <button onclick="clearChat()">Clear</button> <!-- Clear Button -->
     </div>
 
     <script>
-        function startWaveAnimation() {
-            document.getElementById('queryButton').style.display = 'none';
-            document.getElementById('waveContainer').style.display = 'block';
-        }
-
-        document.addEventListener('mousemove', updateCursorShadow);
-
-        function updateCursorShadow(event) {
-            const x = event.clientX;
-            const y = event.clientY;
-            const cursorShadow = document.querySelector('.cursor-shadow');
-            cursorShadow.style.left = x - 10 + 'px';
-            cursorShadow.style.top = y - 10 + 'px';
-            cursorShadow.style.opacity = 1;
-            setTimeout(() => {
-                cursorShadow.style.opacity = 0;
-            }, 300);
-        }
-
         function sendMessage() {
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
@@ -255,10 +237,17 @@
                 });
         }
 
+        function clearChat() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = ''; // Clears all chat messages
+        }
+
         function toggleChat() {
             const chatContainer = document.getElementById('chat-container');
             chatContainer.classList.toggle('open');
         }
+    </script>
+
     </script>
 </body>
 
