@@ -49,11 +49,7 @@ def store_command(question, language_choice, voice_gender):
     })
 ```
 
-## Step 5: Run Your Application
 
-Run your Python application. Make sure it's properly configured to use the Firebase Admin SDK. When the `store_command` function is called, it will push data to your Firebase Realtime Database.
-
-## Demo
 
 [Watch the demo video](https://drive.google.com/file/d/1MiKG7Uwik6E1_09Ev09YLbfcmODy-b1G/view?usp=sharing)
 
@@ -73,9 +69,11 @@ Go to the Firebase Console, navigate to your project, and check the Realtime Dat
 ![image](https://github.com/user-attachments/assets/04e4f6dd-6184-492a-858d-fa83106558e7)
 
 
->>>>>>> d56f651423686d0ff607b269a4bfe50dc79e85fc
-## License
+## Step 5: Run Your Application
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+Run your Python application. Make sure it's properly configured to use the Firebase Admin SDK. When the `store_command` function is called, it will push data to your Firebase Realtime Database.
+
+## Demo
+
 
 
