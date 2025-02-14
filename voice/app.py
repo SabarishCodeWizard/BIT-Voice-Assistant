@@ -9,6 +9,7 @@ from firebase_admin import credentials, db
 import json
 import os
 from dotenv import load_dotenv
+import tempmail
 
 
 load_dotenv()
@@ -24,7 +25,7 @@ firebase_config = {
 }
 
 
-# cred = credentials.Certificate("D:/GitHub/BIT-Voice-Assistant-main/voice/voice-e358a-firebase-adminsdk-o9t2y-1ef8f373a8.json")
+cred = credentials.Certificate("D:/GitHub/BIT-Voice-Assistant-main/voice-e358a-firebase-adminsdk-iswu3-8f3cd9b7a8.json")
 
 try:
     firebase_admin.initialize_app(cred, firebase_config)
